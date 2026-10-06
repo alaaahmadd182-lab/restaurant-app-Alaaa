@@ -1,3 +1,34 @@
+let editingRestaurantId = null;
+function fillRestaurantForm(restaurant) {
+    editingRestaurantId = restaurant.id;
+
+    document.getElementById("restaurant-name").value =
+        restaurant.name;
+
+    document.getElementById("restaurant-description").value =
+        restaurant.description || "";
+
+    document.getElementById("restaurant-address").value =
+        restaurant.address;
+
+    document.getElementById("restaurant-category").value =
+        restaurant.category_id;
+
+    document.getElementById("restaurant-latitude").value =
+        restaurant.latitude || "";
+
+    document.getElementById("restaurant-longitude").value =
+        restaurant.longitude || "";
+
+    document.getElementById("restaurant-image").value =
+        restaurant.image || "";
+
+    document
+        .querySelector("#restaurant-form button[type='submit']")
+        .textContent = "Update Restaurant";
+}
+
+
 async function checkAdmin() {
     const token = localStorage.getItem("token");
 
@@ -43,8 +74,24 @@ async function loadAdminRestaurants() {
             const address = document.createElement("p");
             address.textContent = restaurant.address;
 
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+
+            editButton.addEventListener("click", () => {
+                fillRestaurantForm(restaurant);
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", () => {
+                deleteRestaurant(restaurant.id);
+            });
+
             restaurantBox.appendChild(name);
             restaurantBox.appendChild(address);
+            restaurantBox.appendChild(editButton);
+            restaurantBox.appendChild(deleteButton);
 
             container.appendChild(restaurantBox);
         });
@@ -64,7 +111,7 @@ document
     });
 
 
-    
+
 async function loadAdminCategories() {
     try {
         const response = await apiRequest("/categories");
@@ -130,15 +177,36 @@ restaurantForm.addEventListener("submit", async (event) => {
     };
 
     try {
-        await apiRequest("/restaurants", {
-            method: "POST",
-            body: JSON.stringify(restaurant)
-        });
+        if (editingRestaurantId) {
 
-        message.textContent =
-            "Restaurant added successfully.";
+            await apiRequest(
+                `/restaurants/${editingRestaurantId}`,
+                {
+                    method: "PUT",
+                    body: JSON.stringify(restaurant)
+                }
+            );
+
+            message.textContent =
+                "Restaurant updated successfully.";
+
+            editingRestaurantId = null;
+
+        } else {
+
+            await apiRequest("/restaurants", {
+                method: "POST",
+                body: JSON.stringify(restaurant)
+            });
+
+            message.textContent =
+                "Restaurant added successfully.";
+        }
 
         restaurantForm.reset();
+        document
+            .querySelector("#restaurant-form button[type='submit']")
+            .textContent = "Add Restaurant";
 
         loadAdminRestaurants();
 
@@ -147,6 +215,29 @@ restaurantForm.addEventListener("submit", async (event) => {
     }
 });
 
+async function deleteRestaurant(id) {
+    const confirmed = confirm(
+        "Are you sure you want to delete this restaurant?"
+    );
 
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+        await apiRequest(`/restaurants/${id}`, {
+            method: "DELETE"
+        });
+
+        document.getElementById("restaurant-message").textContent =
+            "Restaurant deleted successfully.";
+
+        loadAdminRestaurants();
+
+    } catch (error) {
+        document.getElementById("restaurant-message").textContent =
+            error.message;
+    }
+}
 loadAdminCategories();
 checkAdmin();
