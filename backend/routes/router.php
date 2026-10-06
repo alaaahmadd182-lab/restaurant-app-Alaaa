@@ -4,7 +4,7 @@ require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../controllers/RestaurantController.php";
 require_once __DIR__ . "/../controllers/AuthController.php";
 require_once __DIR__ . "/../middleware/auth.php";
-
+require_once __DIR__ . "/../controllers/CategoryController.php";
 
 
 function routeRequest()
@@ -92,6 +92,22 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+
+
+// -----------------------------
+// CATEGORIES
+// -----------------------------
+//public endpoint no require admin func
+    if ($path === "categories") {
+
+        if ($method === "GET") {
+            getCategories();
+        }
+
+        sendError("Method not allowed.", 405);
+    }
+
+
     // Nothing matched
     sendError("Route not found.", 404);
 }
