@@ -5,6 +5,9 @@ require_once __DIR__ . "/../controllers/RestaurantController.php";
 require_once __DIR__ . "/../controllers/AuthController.php";
 require_once __DIR__ . "/../middleware/auth.php";
 require_once __DIR__ . "/../controllers/CategoryController.php";
+require_once __DIR__ . "/../controllers/MenuController.php";
+
+
 
 
 function routeRequest()
@@ -106,6 +109,51 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+
+
+// -----------------------------
+// RESTAURANT MENUS
+// -----------------------------
+if (preg_match("#^restaurants/(\d+)/menus$#", $path, $matches)) {
+
+    $restaurantId = (int) $matches[1];
+
+    if ($method === "GET") {
+        getMenusByRestaurant($restaurantId);
+    }
+
+    if ($method === "POST") {
+        requireAdmin();
+        createMenu($restaurantId);
+    }
+
+    sendError("Method not allowed.", 405);
+}
+
+
+// -----------------------------
+// SINGLE MENU
+// -----------------------------
+    if (preg_match("#^menus/(\d+)$#", $path, $matches)) {
+
+        $menuId = (int) $matches[1];
+
+        if ($method === "PUT") {
+            requireAdmin();
+            updateMenu($menuId);
+        }
+
+        if ($method === "DELETE") {
+            requireAdmin();
+            deleteMenu($menuId);
+        }
+
+        sendError("Method not allowed.", 405);
+    }
+
+
+
+
 
 
     // Nothing matched
