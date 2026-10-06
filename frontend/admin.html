@@ -97,7 +97,51 @@
         <p id="menu-message"></p>
 
         <div id="admin-menus"></div>
+ 
+        
 
+        <section id="item-management" hidden>
+
+            <h3 id="item-menu-name">Menu Items</h3>
+
+            <form id="item-form">
+
+                <input
+                    type="text"
+                    id="item-name"
+                    placeholder="Item Name"
+                    required
+                >
+
+                <textarea
+                    id="item-description"
+                    placeholder="Description"
+                ></textarea>
+
+                <input
+                    type="number"
+                    id="item-price"
+                    placeholder="Price"
+                    min="0"
+                    step="0.01"
+                    required
+                >
+
+                <input
+                    type="text"
+                    id="item-image"
+                    placeholder="Image path (optional)"
+                >
+
+                <button type="submit">Add Item</button>
+
+            </form>
+
+            <p id="item-message"></p>
+
+            <div id="admin-items"></div>
+
+        </section>
     </section>
 </main>
 

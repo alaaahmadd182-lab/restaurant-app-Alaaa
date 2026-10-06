@@ -307,13 +307,21 @@ async function loadAdminMenus(restaurantId, restaurantName) {
             const deleteButton = document.createElement("button");
             deleteButton.textContent = "Delete";
 
+
             deleteButton.addEventListener("click", () => {
                 deleteMenu(menu.id);
             });
 
+            const itemsButton = document.createElement("button");
+            itemsButton.textContent = "Manage Items";
+
+            itemsButton.addEventListener("click", () => {
+                loadAdminItems(menu.id, menu.name);
+            });
             box.appendChild(name);
             box.appendChild(editButton);
             box.appendChild(deleteButton);
+            box.appendChild(itemsButton);
 
             container.appendChild(box);
         });
@@ -405,6 +413,217 @@ document
 
     } catch (error) {
         document.getElementById("menu-message").textContent =
+            error.message;
+    }
+}
+
+
+
+let selectedMenuId = null;
+let editingItemId = null;
+
+
+async function loadAdminItems(menuId, menuName) {
+    selectedMenuId = menuId;
+    editingItemId = null;
+
+    const section =
+        document.getElementById("item-management");
+
+    const container =
+        document.getElementById("admin-items");
+
+    section.hidden = false;
+
+    document.getElementById("item-menu-name").textContent =
+        `Menu Items - ${menuName}`;
+
+    document.getElementById("item-form").reset();
+
+    document
+        .querySelector("#item-form button[type='submit']")
+        .textContent = "Add Item";
+
+    try {
+        const response = await apiRequest(
+            `/menus/${menuId}/items`
+        );
+
+        const items = response.data;
+
+        container.innerHTML = "";
+
+        if (items.length === 0) {
+            container.textContent = "No items available.";
+            return;
+        }
+
+        items.forEach((item) => {
+            const box = document.createElement("div");
+
+            const name = document.createElement("h4");
+            name.textContent = item.name;
+
+            const description = document.createElement("p");
+            description.textContent =
+                item.description || "No description.";
+
+            const price = document.createElement("p");
+            price.textContent =
+                `$${Number(item.price).toFixed(2)}`;
+
+            const editButton =
+                document.createElement("button");
+
+            editButton.textContent = "Edit";
+
+            editButton.addEventListener("click", () => {
+                editingItemId = item.id;
+
+                document.getElementById("item-name").value =
+                    item.name;
+
+                document.getElementById("item-description").value =
+                    item.description || "";
+
+                document.getElementById("item-price").value =
+                    item.price;
+
+                document.getElementById("item-image").value =
+                    item.image || "";
+
+                document
+                    .querySelector(
+                        "#item-form button[type='submit']"
+                    )
+                    .textContent = "Update Item";
+            });
+
+            const deleteButton =
+                document.createElement("button");
+
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", () => {
+                deleteMenuItem(item.id);
+            });
+
+            box.appendChild(name);
+            box.appendChild(description);
+            box.appendChild(price);
+            box.appendChild(editButton);
+            box.appendChild(deleteButton);
+
+            container.appendChild(box);
+        });
+
+    } catch (error) {
+        document.getElementById("item-message").textContent =
+            error.message;
+    }
+}
+
+document
+    .getElementById("item-form")
+    .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const item = {
+            name:
+                document.getElementById("item-name").value.trim(),
+
+            description:
+                document
+                    .getElementById("item-description")
+                    .value.trim(),
+
+            price:
+                Number(
+                    document.getElementById("item-price").value
+                ),
+
+            image:
+                document.getElementById("item-image").value.trim()
+                || null
+        };
+
+        const message =
+            document.getElementById("item-message");
+
+        try {
+            if (editingItemId) {
+
+                await apiRequest(
+                    `/menu-items/${editingItemId}`,
+                    {
+                        method: "PUT",
+                        body: JSON.stringify(item)
+                    }
+                );
+
+                message.textContent =
+                    "Item updated successfully.";
+
+                editingItemId = null;
+
+            } else {
+
+                await apiRequest(
+                    `/menus/${selectedMenuId}/items`,
+                    {
+                        method: "POST",
+                        body: JSON.stringify(item)
+                    }
+                );
+
+                message.textContent =
+                    "Item added successfully.";
+            }
+
+            document.getElementById("item-form").reset();
+
+            document
+                .querySelector(
+                    "#item-form button[type='submit']"
+                )
+                .textContent = "Add Item";
+
+            const menuName =
+                document
+                    .getElementById("item-menu-name")
+                    .textContent.replace("Menu Items - ", "");
+
+            loadAdminItems(selectedMenuId, menuName);
+
+        } catch (error) {
+            message.textContent = error.message;
+        }
+    });
+
+
+    async function deleteMenuItem(id) {
+    if (!confirm("Are you sure you want to delete this item?")) {
+        return;
+    }
+
+    try {
+        await apiRequest(`/menu-items/${id}`, {
+            method: "DELETE"
+        });
+
+        document.getElementById("item-message").textContent =
+            "Item deleted successfully.";
+
+        const menuName =
+            document
+                .getElementById("item-menu-name")
+                .textContent.replace("Menu Items - ", "");
+
+        loadAdminItems(selectedMenuId, menuName);
+
+    } catch (error) {
+        document.getElementById("item-message").textContent =
             error.message;
     }
 }
