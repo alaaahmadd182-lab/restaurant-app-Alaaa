@@ -15,6 +15,15 @@ function displayRestaurants(restaurants) {
         const card = document.createElement("div");
         card.classList.add("restaurant-card");
 
+        if (restaurant.image) {
+            const image = document.createElement("img");
+
+            image.src = restaurant.image;
+            image.alt = restaurant.name;
+
+            card.appendChild(image);
+        }
+        
         const name = document.createElement("h3");
         name.textContent = restaurant.name;
 

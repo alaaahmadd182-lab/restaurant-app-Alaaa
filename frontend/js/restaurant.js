@@ -20,7 +20,14 @@ async function loadRestaurant() {
         );
 
         const restaurant = response.data;
+        if (restaurant.image) {
+            const image = document.createElement("img");
 
+            image.src = restaurant.image;
+            image.alt = restaurant.name;
+
+            detailsContainer.appendChild(image);
+        }
         const name = document.createElement("h2");
         name.textContent = restaurant.name;
 
@@ -98,6 +105,15 @@ async function loadMenuItems(menuId, section) {
         items.forEach((item) => {
             const itemContainer = document.createElement("div");
             itemContainer.classList.add("menu-item");
+
+            if (item.image) {
+                const image = document.createElement("img");
+
+                image.src = item.image;
+                image.alt = item.name;
+
+                itemContainer.appendChild(image);
+            }
 
             const name = document.createElement("h4");
             name.textContent = item.name;

@@ -1,0 +1,7 @@
+.restaurant-card img,
+#restaurant-details img,
+.menu-item img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+}
