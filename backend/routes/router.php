@@ -54,17 +54,11 @@ function routeRequest()
         }
 
         if ($method === "PUT") {
-            sendSuccess(
-                ["id" => $restaurantId],
-                "Restaurant update route reached"
-            );
+            updateRestaurant($restaurantId);
         }
 
         if ($method === "DELETE") {
-            sendSuccess(
-                ["id" => $restaurantId],
-                "Restaurant delete route reached"
-            );
+            deleteRestaurant($restaurantId);
         }
 
         sendError("Method not allowed.", 405);

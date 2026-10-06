@@ -182,3 +182,135 @@ function getRestaurantById($id)
         sendError("Unable to create restaurant.", 500);
     }
 }
+
+function updateRestaurant($id)
+{
+    global $pdo;
+
+    $data = getJsonBody();
+
+    $name = trim($data["name"] ?? "");
+    $description = trim($data["description"] ?? "");
+    $address = trim($data["address"] ?? "");
+    $image = trim($data["image"] ?? "");
+
+    $categoryId = filter_var(
+        $data["category_id"] ?? null,
+        FILTER_VALIDATE_INT
+    );
+
+    $latitude = $data["latitude"] ?? null;
+    $longitude = $data["longitude"] ?? null;
+
+    if ($name === "" || $address === "" || $categoryId === false) {
+        sendError(
+            "Name, address and a valid category_id are required.",
+            400
+        );
+    }
+
+    if ($latitude !== null &&
+        (!is_numeric($latitude) || $latitude < -90 || $latitude > 90)) {
+        sendError("Invalid latitude.", 400);
+    }
+
+    if ($longitude !== null &&
+        (!is_numeric($longitude) || $longitude < -180 || $longitude > 180)) {
+        sendError("Invalid longitude.", 400);
+    }
+
+    try {
+        // Check restaurant exists
+        $checkStmt = $pdo->prepare(
+            "SELECT id FROM restaurants WHERE id = :id"
+        );
+
+        $checkStmt->execute(["id" => $id]);
+
+        if (!$checkStmt->fetch()) {
+            sendError("Restaurant not found.", 404);
+        }
+
+        // Check category exists
+        $categoryStmt = $pdo->prepare(
+            "SELECT id FROM categories WHERE id = :id"
+        );
+
+        $categoryStmt->execute([
+            "id" => $categoryId
+        ]);
+
+        if (!$categoryStmt->fetch()) {
+            sendError("Category not found.", 400);
+        }
+
+        $sql = "
+            UPDATE restaurants
+            SET
+                category_id = :category_id,
+                name = :name,
+                description = :description,
+                address = :address,
+                image = :image,
+                latitude = :latitude,
+                longitude = :longitude
+            WHERE id = :id
+        ";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->execute([
+            "category_id" => $categoryId,
+            "name" => $name,
+            "description" => $description !== "" ? $description : null,
+            "address" => $address,
+            "image" => $image !== "" ? $image : null,
+            "latitude" => $latitude,
+            "longitude" => $longitude,
+            "id" => $id
+        ]);
+
+        sendSuccess(
+            ["id" => $id],
+            "Restaurant updated successfully."
+        );
+
+    } catch (PDOException $e) {
+        sendError("Unable to update restaurant.", 500);
+    }
+}
+
+function deleteRestaurant($id)
+{
+    global $pdo;
+
+    try {
+        $checkStmt = $pdo->prepare(
+            "SELECT id FROM restaurants WHERE id = :id"
+        );
+
+        $checkStmt->execute([
+            "id" => $id
+        ]);
+
+        if (!$checkStmt->fetch()) {
+            sendError("Restaurant not found.", 404);
+        }
+
+        $stmt = $pdo->prepare(
+            "DELETE FROM restaurants WHERE id = :id"
+        );
+
+        $stmt->execute([
+            "id" => $id
+        ]);
+
+        sendSuccess(
+            null,
+            "Restaurant deleted successfully."
+        );
+
+    } catch (PDOException $e) {
+        sendError("Unable to delete restaurant.", 500);
+    }
+}
