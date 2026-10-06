@@ -46,3 +46,47 @@ if (signupForm) {
         }
     });
 }
+
+
+
+
+
+const loginForm = document.getElementById("login-form");
+
+if (loginForm) {
+    loginForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const email =
+            document.getElementById("login-email").value.trim();
+
+        const password =
+            document.getElementById("login-password").value;
+
+        const message = document.getElementById("message");
+
+        try {
+            const response = await apiRequest("/auth/login", {
+                method: "POST",
+
+                body: JSON.stringify({
+                    email: email,
+                    password: password
+                })
+            });
+
+            sessionStorage.setItem("otp_email", email);
+
+            // Temporary development-only OTP
+            sessionStorage.setItem(
+                "development_otp",
+                response.data.development_otp
+            );
+
+            window.location.href = "otp.html";
+
+        } catch (error) {
+            message.textContent = error.message;
+        }
+    });
+}
