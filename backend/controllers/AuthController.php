@@ -3,6 +3,9 @@
 require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../helpers/request.php";
+require_once __DIR__ . "/../helpers/jwt.php";
+
+
 
 function signup()
 {
@@ -161,15 +164,18 @@ function login()
         if (!$user || !password_verify($password, $user["password"])) {
             sendError("Invalid email or password.", 401);
         }
-
+        $token = generateJwt($user);
         sendSuccess(
             [
-                "id" => (int) $user["id"],
-                "first_name" => $user["first_name"],
-                "last_name" => $user["last_name"],
-                "username" => $user["username"],
-                "email" => $user["email"],
-                "role" => $user["role"]
+                "token" => $token,
+                "user" => [
+                    "id" => (int) $user["id"],
+                    "first_name" => $user["first_name"],
+                    "last_name" => $user["last_name"],
+                    "username" => $user["username"],
+                    "email" => $user["email"],
+                    "role" => $user["role"]
+                ]
             ],
             "Login successful."
         );
