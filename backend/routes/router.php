@@ -115,7 +115,24 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+    if ($path === "auth/me") {
 
+        if ($method === "GET") {
+
+            $user = authenticateUser();
+
+            sendSuccess(
+                [
+                    "id" => (int) $user->id,
+                    "username" => $user->username,
+                    "role" => $user->role
+                ],
+                "Authenticated user retrieved successfully."
+            );
+        }
+
+        sendError("Method not allowed.", 405);
+    }
 // -----------------------------
 // CATEGORIES
 // -----------------------------
