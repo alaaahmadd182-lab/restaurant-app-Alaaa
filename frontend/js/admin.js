@@ -87,12 +87,17 @@ async function loadAdminRestaurants() {
             deleteButton.addEventListener("click", () => {
                 deleteRestaurant(restaurant.id);
             });
+            const menusButton = document.createElement("button");
+            menusButton.textContent = "Manage Menus";
 
+            menusButton.addEventListener("click", () => {
+                loadAdminMenus(restaurant.id, restaurant.name);
+            });
             restaurantBox.appendChild(name);
             restaurantBox.appendChild(address);
             restaurantBox.appendChild(editButton);
             restaurantBox.appendChild(deleteButton);
-
+            restaurantBox.appendChild(menusButton);
             container.appendChild(restaurantBox);
         });
 
@@ -236,6 +241,170 @@ async function deleteRestaurant(id) {
 
     } catch (error) {
         document.getElementById("restaurant-message").textContent =
+            error.message;
+    }
+}
+
+
+
+
+let selectedRestaurantId = null;
+let editingMenuId = null;
+
+
+async function loadAdminMenus(restaurantId, restaurantName) {
+    selectedRestaurantId = restaurantId;
+    editingMenuId = null;
+
+    const section = document.getElementById("menu-management");
+    const container = document.getElementById("admin-menus");
+
+    section.hidden = false;
+
+    document.getElementById("menu-restaurant-name").textContent =
+        `Menus - ${restaurantName}`;
+
+    document.getElementById("menu-form").reset();
+
+    document
+        .querySelector("#menu-form button[type='submit']")
+        .textContent = "Add Menu";
+
+    try {
+        const response = await apiRequest(
+            `/restaurants/${restaurantId}/menus`
+        );
+
+        const menus = response.data;
+
+        container.innerHTML = "";
+
+        if (menus.length === 0) {
+            container.textContent = "No menus available.";
+            return;
+        }
+
+        menus.forEach((menu) => {
+            const box = document.createElement("div");
+
+            const name = document.createElement("h3");
+            name.textContent = menu.name;
+
+            const editButton = document.createElement("button");
+            editButton.textContent = "Edit";
+
+            editButton.addEventListener("click", () => {
+                editingMenuId = menu.id;
+
+                document.getElementById("menu-name").value =
+                    menu.name;
+
+                document
+                    .querySelector("#menu-form button[type='submit']")
+                    .textContent = "Update Menu";
+            });
+
+            const deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+
+            deleteButton.addEventListener("click", () => {
+                deleteMenu(menu.id);
+            });
+
+            box.appendChild(name);
+            box.appendChild(editButton);
+            box.appendChild(deleteButton);
+
+            container.appendChild(box);
+        });
+
+    } catch (error) {
+        document.getElementById("menu-message").textContent =
+            error.message;
+    }
+}
+
+document
+    .getElementById("menu-form")
+    .addEventListener("submit", async (event) => {
+
+        event.preventDefault();
+
+        const name =
+            document.getElementById("menu-name").value.trim();
+
+        const message =
+            document.getElementById("menu-message");
+
+        try {
+            if (editingMenuId) {
+
+                await apiRequest(`/menus/${editingMenuId}`, {
+                    method: "PUT",
+                    body: JSON.stringify({ name })
+                });
+
+                message.textContent = "Menu updated successfully.";
+                editingMenuId = null;
+
+            } else {
+
+                await apiRequest(
+                    `/restaurants/${selectedRestaurantId}/menus`,
+                    {
+                        method: "POST",
+                        body: JSON.stringify({ name })
+                    }
+                );
+
+                message.textContent = "Menu added successfully.";
+            }
+
+            document.getElementById("menu-form").reset();
+
+            document
+                .querySelector("#menu-form button[type='submit']")
+                .textContent = "Add Menu";
+
+            loadAdminMenus(
+                selectedRestaurantId,
+                document
+                    .getElementById("menu-restaurant-name")
+                    .textContent.replace("Menus - ", "")
+            );
+
+        } catch (error) {
+            message.textContent = error.message;
+        }
+    });
+
+
+
+    async function deleteMenu(id) {
+    if (!confirm("Delete this menu and its items?")) {
+        return;
+    }
+
+    try {
+        await apiRequest(`/menus/${id}`, {
+            method: "DELETE"
+        });
+
+        document.getElementById("menu-message").textContent =
+            "Menu deleted successfully.";
+
+        const restaurantName =
+            document
+                .getElementById("menu-restaurant-name")
+                .textContent.replace("Menus - ", "");
+
+        loadAdminMenus(
+            selectedRestaurantId,
+            restaurantName
+        );
+
+    } catch (error) {
+        document.getElementById("menu-message").textContent =
             error.message;
     }
 }
