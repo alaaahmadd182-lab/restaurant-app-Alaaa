@@ -120,3 +120,61 @@ function signup()
         sendError("Unable to create account.", 500);
     }
 }
+function login()
+{
+    global $pdo;
+
+    $data = getJsonBody();
+
+    $email = trim($data["email"] ?? "");
+    $password = $data["password"] ?? "";
+
+    if ($email === "" || $password === "") {
+        sendError("Email and password are required.", 400);
+    }
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        sendError("Invalid email address.", 400);
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            SELECT
+                id,
+                first_name,
+                last_name,
+                username,
+                email,
+                password,
+                role
+            FROM users
+            WHERE email = :email
+            LIMIT 1
+        ");
+
+        $stmt->execute([
+            "email" => $email
+        ]);
+
+        $user = $stmt->fetch();
+
+        if (!$user || !password_verify($password, $user["password"])) {
+            sendError("Invalid email or password.", 401);
+        }
+
+        sendSuccess(
+            [
+                "id" => (int) $user["id"],
+                "first_name" => $user["first_name"],
+                "last_name" => $user["last_name"],
+                "username" => $user["username"],
+                "email" => $user["email"],
+                "role" => $user["role"]
+            ],
+            "Login successful."
+        );
+
+    } catch (PDOException $e) {
+        sendError("Unable to login.", 500);
+    }
+}

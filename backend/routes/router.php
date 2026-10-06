@@ -75,6 +75,14 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+    if ($path === "auth/login") {
+
+        if ($method === "POST") {
+            login();
+        }
+
+        sendError("Method not allowed.", 405);
+    }
     // Nothing matched
     sendError("Route not found.", 404);
 }
