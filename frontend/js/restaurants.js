@@ -1,4 +1,7 @@
 const restaurantsContainer = document.getElementById("restaurants");
+let currentPage = 1;
+let totalPages = 1;
+const limit = 5;
 
 function displayRestaurants(restaurants) {
     restaurantsContainer.innerHTML = "";
@@ -35,14 +38,7 @@ function displayRestaurants(restaurants) {
 }
 
 async function loadRestaurants() {
-    try {
-        const response = await apiRequest("/restaurants");
-
-        displayRestaurants(response.data.restaurants);
-
-    } catch (error) {
-        restaurantsContainer.textContent = error.message;
-    }
+    await filterRestaurants(1);
 }
 
 async function loadCategories() {
@@ -66,11 +62,17 @@ async function loadCategories() {
     }
 }
 
-async function filterRestaurants() {
-    const search = document.getElementById("search").value.trim();
-    const category = document.getElementById("category").value;
+async function filterRestaurants(page = 1) {
+    const search =
+        document.getElementById("search").value.trim();
+
+    const category =
+        document.getElementById("category").value;
 
     const params = new URLSearchParams();
+
+    params.append("page", page);
+    params.append("limit", limit);
 
     if (search) {
         params.append("search", search);
@@ -86,6 +88,14 @@ async function filterRestaurants() {
         );
 
         displayRestaurants(response.data.restaurants);
+
+        currentPage =
+            response.data.pagination.current_page;
+
+        totalPages =
+            response.data.pagination.total_pages;
+
+        updatePagination();
 
     } catch (error) {
         restaurantsContainer.textContent = error.message;
@@ -125,20 +135,49 @@ function loadNearbyRestaurants() {
     );
 }
 
+function updatePagination() {
+    document.getElementById("page-info").textContent =
+        `Page ${currentPage} of ${totalPages}`;
 
+    document.getElementById("previous-page").disabled =
+        currentPage <= 1;
+
+    document.getElementById("next-page").disabled =
+        currentPage >= totalPages;
+}
 
 
 document
     .getElementById("search")
-    .addEventListener("input", filterRestaurants);
+    .addEventListener("input", () => {
+        filterRestaurants(1);
+    });
 
 document
     .getElementById("category")
-    .addEventListener("change", filterRestaurants);
-
+    .addEventListener("change", () => {
+        filterRestaurants(1);
+    });
 document
     .getElementById("near-me")
     .addEventListener("click", loadNearbyRestaurants);
+
+
+document
+    .getElementById("previous-page")
+    .addEventListener("click", () => {
+        if (currentPage > 1) {
+            filterRestaurants(currentPage - 1);
+        }
+    });
+
+document
+    .getElementById("next-page")
+    .addEventListener("click", () => {
+        if (currentPage < totalPages) {
+            filterRestaurants(currentPage + 1);
+        }
+    });
 
 loadCategories();
 loadRestaurants();
