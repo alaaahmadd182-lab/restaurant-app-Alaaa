@@ -92,6 +92,42 @@ async function filterRestaurants() {
     }
 }
 
+
+
+function loadNearbyRestaurants() {
+    if (!navigator.geolocation) {
+        restaurantsContainer.textContent =
+            "Geolocation is not supported by your browser.";
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        async (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            try {
+                const response = await apiRequest(
+                    `/restaurants/nearby?latitude=${latitude}&longitude=${longitude}&radius=10`
+                );
+
+                displayRestaurants(response.data);
+
+            } catch (error) {
+                restaurantsContainer.textContent = error.message;
+            }
+        },
+
+        () => {
+            restaurantsContainer.textContent =
+                "Location permission is required to use Near Me.";
+        }
+    );
+}
+
+
+
+
 document
     .getElementById("search")
     .addEventListener("input", filterRestaurants);
@@ -99,6 +135,10 @@ document
 document
     .getElementById("category")
     .addEventListener("change", filterRestaurants);
+
+document
+    .getElementById("near-me")
+    .addEventListener("click", loadNearbyRestaurants);
 
 loadCategories();
 loadRestaurants();
