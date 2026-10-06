@@ -22,7 +22,60 @@
     <h2>Restaurant Management</h2>
 
     <p id="admin-message"></p>
+    <h3>Add Restaurant</h3>
 
+    <form id="restaurant-form">
+
+        <input
+            type="text"
+            id="restaurant-name"
+            placeholder="Restaurant Name"
+            required
+        >
+
+        <textarea
+            id="restaurant-description"
+            placeholder="Description"
+        ></textarea>
+
+        <input
+            type="text"
+            id="restaurant-address"
+            placeholder="Address"
+            required
+        >
+
+        <select id="restaurant-category" required>
+            <option value="">Select Category</option>
+        </select>
+
+        <input
+            type="number"
+            id="restaurant-latitude"
+            placeholder="Latitude"
+            step="any"
+        >
+
+        <input
+            type="number"
+            id="restaurant-longitude"
+            placeholder="Longitude"
+            step="any"
+        >
+
+        <input
+            type="text"
+            id="restaurant-image"
+            placeholder="Image path (optional)"
+        >
+
+        <button type="submit">Add Restaurant</button>
+
+    </form>
+
+    <p id="restaurant-message"></p>
+
+    <hr>
     <div id="admin-restaurants"></div>
 </main>
 
