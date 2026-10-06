@@ -2,6 +2,7 @@
 
 require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../controllers/RestaurantController.php";
+require_once __DIR__ . "/../controllers/AuthController.php";
 function routeRequest()
 {
     $method = $_SERVER["REQUEST_METHOD"];
@@ -63,7 +64,17 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+// -----------------------------
+// AUTHENTICATION
+// -----------------------------
+    if ($path === "auth/signup") {
 
+        if ($method === "POST") {
+            signup();
+        }
+
+        sendError("Method not allowed.", 405);
+    }
     // Nothing matched
     sendError("Route not found.", 404);
 }
