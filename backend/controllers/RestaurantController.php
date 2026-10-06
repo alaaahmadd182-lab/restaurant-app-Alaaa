@@ -3,11 +3,116 @@
 require_once __DIR__ . "/../config/database.php";
 require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../helpers/request.php";
-function getRestaurants()
-{
-    global $pdo;
 
+
+function getRestaurants(){
+    global $pdo;
     try {
+        // -----------------------------
+        // QUERY PARAMETERS
+        // -----------------------------
+        $search = trim($_GET["search"] ?? "");
+        $category = $_GET["category"] ?? null;
+
+        $page = filter_var(
+            $_GET["page"] ?? 1,
+            FILTER_VALIDATE_INT
+        );
+
+        $limit = filter_var(
+            $_GET["limit"] ?? 10,
+            FILTER_VALIDATE_INT
+        );
+
+        // Validate page
+        if ($page === false || $page < 1) {
+            sendError("Page must be a positive integer.", 400);
+        }
+
+        // Validate limit and prevent huge requests
+        if ($limit === false || $limit < 1 || $limit > 50) {
+            sendError("Limit must be between 1 and 50.", 400);
+        }
+
+        // Validate category when provided
+        if ($category !== null && $category !== "") {
+            $category = filter_var(
+                $category,
+                FILTER_VALIDATE_INT
+            );
+
+            if ($category === false || $category < 1) {
+                sendError("Invalid category.", 400);
+            }
+        } else {
+            $category = null;
+        }
+
+        $offset = ($page - 1) * $limit;
+
+        // -----------------------------
+        // BUILD FILTERS
+        // -----------------------------
+        $conditions = [];
+        $params = [];
+
+        if ($search !== "") {
+            $conditions[] = "
+                (
+                    restaurants.name LIKE :search_name
+                    OR restaurants.description LIKE :search_description
+                    OR restaurants.address LIKE :search_address
+                )
+            ";
+
+            $searchValue = "%" . $search . "%";
+
+            $params["search_name"] = $searchValue;
+            $params["search_description"] = $searchValue;
+            $params["search_address"] = $searchValue;
+        }
+
+        if ($category !== null) {
+            $conditions[] = "restaurants.category_id = :category";
+            $params["category"] = $category;
+        }
+
+        $whereClause = "";
+
+        if (!empty($conditions)) {
+            $whereClause = "WHERE " . implode(" AND ", $conditions);
+        }
+
+        // -----------------------------
+        // COUNT MATCHING RESTAURANTS
+        // -----------------------------
+        $countSql = "
+            SELECT COUNT(*)
+            FROM restaurants
+            $whereClause
+        ";
+
+        $countStmt = $pdo->prepare($countSql);
+
+        foreach ($params as $key => $value) {
+            $type = $key === "category"
+                ? PDO::PARAM_INT
+                : PDO::PARAM_STR;
+
+            $countStmt->bindValue(
+                ":" . $key,
+                $value,
+                $type
+            );
+        }
+
+        $countStmt->execute();
+
+        $total = (int) $countStmt->fetchColumn();
+
+        // -----------------------------
+        // GET RESTAURANTS
+        // -----------------------------
         $sql = "
             SELECT
                 restaurants.id,
@@ -20,19 +125,68 @@ function getRestaurants()
                 categories.id AS category_id,
                 categories.name AS category_name
             FROM restaurants
+
             INNER JOIN categories
                 ON restaurants.category_id = categories.id
+
+            $whereClause
+
             ORDER BY restaurants.id DESC
+
+            LIMIT :limit
+            OFFSET :offset
         ";
 
         $stmt = $pdo->prepare($sql);
+
+        foreach ($params as $key => $value) {
+            if ($key === "category") {
+                $stmt->bindValue(
+                    ":category",
+                    $value,
+                    PDO::PARAM_INT
+                );
+            } else {
+                $stmt->bindValue(
+                    ":" . $key,
+                    $value,
+                    PDO::PARAM_STR
+                );
+            }
+        }
+
+        $stmt->bindValue(
+            ":limit",
+            $limit,
+            PDO::PARAM_INT
+        );
+
+        $stmt->bindValue(
+            ":offset",
+            $offset,
+            PDO::PARAM_INT
+        );
+
         $stmt->execute();
 
         $restaurants = $stmt->fetchAll();
 
+        $totalPages = $total > 0
+            ? (int) ceil($total / $limit)
+            : 0;
+
         sendSuccess(
-            $restaurants,
-            "Restaurants retrieved successfully"
+            [
+                "restaurants" => $restaurants,
+
+                "pagination" => [
+                    "current_page" => $page,
+                    "per_page" => $limit,
+                    "total_items" => $total,
+                    "total_pages" => $totalPages
+                ]
+            ],
+            "Restaurants retrieved successfully."
         );
 
     } catch (PDOException $e) {
@@ -81,7 +235,9 @@ function getRestaurantById($id)
     } catch (PDOException $e) {
         sendError("Unable to retrieve restaurant.", 500);
     }
-}function createRestaurant()
+}
+
+function createRestaurant()
 {
     global $pdo;
 
