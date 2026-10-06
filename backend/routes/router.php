@@ -36,8 +36,7 @@ function routeRequest()
         }
 
         if ($method === "POST") {
-            sendSuccess(null, "Restaurant creation route reached", 201);
-        }
+            createRestaurant();        }
 
         sendError("Method not allowed.", 405);
     }
