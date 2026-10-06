@@ -6,7 +6,7 @@ require_once __DIR__ . "/../controllers/AuthController.php";
 require_once __DIR__ . "/../middleware/auth.php";
 require_once __DIR__ . "/../controllers/CategoryController.php";
 require_once __DIR__ . "/../controllers/MenuController.php";
-
+require_once __DIR__ . "/../controllers/MenuItemController.php";
 
 
 
@@ -152,7 +152,45 @@ if (preg_match("#^restaurants/(\d+)/menus$#", $path, $matches)) {
     }
 
 
+// -----------------------------
+// MENU ITEMS
+// -----------------------------
+if (preg_match("#^menus/(\d+)/items$#", $path, $matches)) {
 
+    $menuId = (int) $matches[1];
+
+    if ($method === "GET") {
+        getMenuItems($menuId);
+    }
+
+    if ($method === "POST") {
+        requireAdmin();
+        createMenuItem($menuId);
+    }
+
+    sendError("Method not allowed.", 405);
+}
+
+
+// -----------------------------
+// SINGLE MENU ITEM
+// -----------------------------
+if (preg_match("#^menu-items/(\d+)$#", $path, $matches)) {
+
+    $itemId = (int) $matches[1];
+
+    if ($method === "PUT") {
+        requireAdmin();
+        updateMenuItem($itemId);
+    }
+
+    if ($method === "DELETE") {
+        requireAdmin();
+        deleteMenuItem($itemId);
+    }
+
+    sendError("Method not allowed.", 405);
+}
 
 
 
