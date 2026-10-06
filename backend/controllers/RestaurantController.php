@@ -470,3 +470,121 @@ function deleteRestaurant($id)
         sendError("Unable to delete restaurant.", 500);
     }
 }
+
+
+
+
+function getNearbyRestaurants()
+{
+    global $pdo;
+
+    $latitude = $_GET["latitude"] ?? null;
+    $longitude = $_GET["longitude"] ?? null;
+    $radius = $_GET["radius"] ?? 10;
+
+    if (
+        !is_numeric($latitude) ||
+        $latitude < -90 ||
+        $latitude > 90
+    ) {
+        sendError("Valid latitude is required.", 400);
+    }
+
+    if (
+        !is_numeric($longitude) ||
+        $longitude < -180 ||
+        $longitude > 180
+    ) {
+        sendError("Valid longitude is required.", 400);
+    }
+
+    if (
+        !is_numeric($radius) ||
+        $radius <= 0 ||
+        $radius > 100
+    ) {
+        sendError("Radius must be between 0 and 100 km.", 400);
+    }
+
+    $latitude = (float) $latitude;
+    $longitude = (float) $longitude;
+    $radius = (float) $radius;
+
+    try {
+        $sql = "
+            SELECT
+                restaurants.id,
+                restaurants.name,
+                restaurants.description,
+                restaurants.address,
+                restaurants.image,
+                restaurants.latitude,
+                restaurants.longitude,
+                categories.id AS category_id,
+                categories.name AS category_name,
+
+                (
+                    6371 * ACOS(
+                        COS(RADIANS(:latitude1))
+                        * COS(RADIANS(restaurants.latitude))
+                        * COS(
+                            RADIANS(restaurants.longitude)
+                            - RADIANS(:longitude)
+                        )
+                        + SIN(RADIANS(:latitude2))
+                        * SIN(RADIANS(restaurants.latitude))
+                    )
+                ) AS distance
+
+            FROM restaurants
+
+            INNER JOIN categories
+                ON restaurants.category_id = categories.id
+
+            WHERE
+                restaurants.latitude IS NOT NULL
+                AND restaurants.longitude IS NOT NULL
+
+            HAVING distance <= :radius
+
+            ORDER BY distance ASC
+        ";
+
+        $stmt = $pdo->prepare($sql);
+
+        $stmt->bindValue(
+            ":latitude1",
+            $latitude
+        );
+
+        $stmt->bindValue(
+            ":latitude2",
+            $latitude
+        );
+
+        $stmt->bindValue(
+            ":longitude",
+            $longitude
+        );
+
+        $stmt->bindValue(
+            ":radius",
+            $radius
+        );
+
+        $stmt->execute();
+
+        $restaurants = $stmt->fetchAll();
+
+        sendSuccess(
+            $restaurants,
+            "Nearby restaurants retrieved successfully."
+        );
+
+    } catch (PDOException $e) {
+        sendError(
+            "Unable to retrieve nearby restaurants.",
+            500
+        );
+    }
+}

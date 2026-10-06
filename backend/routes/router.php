@@ -51,7 +51,19 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+    // -----------------------------
+    // NEARBY RESTAURANTS
+    // -----------------------------
+    if ($path === "restaurants/nearby") {
 
+        if ($method === "GET") {
+            getNearbyRestaurants();
+        }
+
+        sendError("Method not allowed.", 405);
+    }
+
+    
     // -----------------------------
     // SINGLE RESTAURANT
     // Example: /restaurants/5
