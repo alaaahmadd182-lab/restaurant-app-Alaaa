@@ -3,6 +3,10 @@
 require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../controllers/RestaurantController.php";
 require_once __DIR__ . "/../controllers/AuthController.php";
+require_once __DIR__ . "/../middleware/auth.php";
+
+
+
 function routeRequest()
 {
     $method = $_SERVER["REQUEST_METHOD"];
@@ -37,7 +41,10 @@ function routeRequest()
         }
 
         if ($method === "POST") {
-            createRestaurant();        }
+            requireAdmin();
+            createRestaurant();
+
+        }
 
         sendError("Method not allowed.", 405);
     }
@@ -50,15 +57,17 @@ function routeRequest()
 
         $restaurantId = (int) $matches[1];
 
-        if ($method === "GET") {
+        if ($method === "GET") {//doesnt require admin because any user can read data
             getRestaurantById($restaurantId);
         }
 
         if ($method === "PUT") {
+            requireAdmin();
             updateRestaurant($restaurantId);
         }
 
         if ($method === "DELETE") {
+            requireAdmin();
             deleteRestaurant($restaurantId);
         }
 
