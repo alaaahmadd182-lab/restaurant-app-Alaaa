@@ -90,3 +90,65 @@ if (loginForm) {
         }
     });
 }
+
+
+
+const otpForm = document.getElementById("otp-form");
+
+if (otpForm) {
+    const email = sessionStorage.getItem("otp_email");
+    const developmentOtp =
+        sessionStorage.getItem("development_otp");
+
+    const developmentCode =
+        document.getElementById("development-code");
+
+    // Development only
+    if (developmentOtp) {
+        developmentCode.textContent =
+            `Development OTP: ${developmentOtp}`;
+    }
+
+    otpForm.addEventListener("submit", async (event) => {
+        event.preventDefault();
+
+        const otp =
+            document.getElementById("otp").value.trim();
+
+        const message =
+            document.getElementById("message");
+
+        if (!email) {
+            message.textContent =
+                "Login session missing. Please login again.";
+            return;
+        }
+
+        try {
+            const response = await apiRequest(
+                "/auth/verify-otp",
+                {
+                    method: "POST",
+
+                    body: JSON.stringify({
+                        email: email,
+                        otp: otp
+                    })
+                }
+            );
+
+            localStorage.setItem(
+                "token",
+                response.data.token
+            );
+
+            sessionStorage.removeItem("otp_email");
+            sessionStorage.removeItem("development_otp");
+
+            window.location.href = "index.html";
+
+        } catch (error) {
+            message.textContent = error.message;
+        }
+    });
+}

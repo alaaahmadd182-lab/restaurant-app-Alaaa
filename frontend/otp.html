@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify OTP</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>Restaurant App</h1>
+</header>
+
+<main>
+
+    <h2>Verify OTP</h2>
+
+    <p>Enter your 6-digit verification code.</p>
+
+    <form id="otp-form">
+
+        <input
+            type="text"
+            id="otp"
+            placeholder="6-digit OTP"
+            maxlength="6"
+            inputmode="numeric"
+            required
+        >
+
+        <button type="submit">Verify</button>
+
+    </form>
+
+    <p id="development-code"></p>
+    <p id="message"></p>
+
+</main>
+
+<script src="js/api.js"></script>
+<script src="js/auth.js"></script>
+
+</body>
+</html>
