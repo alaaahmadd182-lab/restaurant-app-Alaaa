@@ -63,7 +63,7 @@ function routeRequest()
         sendError("Method not allowed.", 405);
     }
 
-    
+
     // -----------------------------
     // SINGLE RESTAURANT
     // Example: /restaurants/5
@@ -107,7 +107,14 @@ function routeRequest()
 
         sendError("Method not allowed.", 405);
     }
+    if ($path === "auth/verify-otp") {
 
+        if ($method === "POST") {
+            verifyOtp();
+        }
+
+        sendError("Method not allowed.", 405);
+    }
 
 // -----------------------------
 // CATEGORIES
