@@ -1,7 +1,7 @@
 <?php
 
 require_once __DIR__ . "/../helpers/response.php";
-
+require_once __DIR__ . "/../controllers/RestaurantController.php";
 function routeRequest()
 {
     $method = $_SERVER["REQUEST_METHOD"];
@@ -32,7 +32,7 @@ function routeRequest()
     if ($path === "restaurants") {
 
         if ($method === "GET") {
-            sendSuccess([], "Restaurants retrieved successfully");
+            getRestaurants();
         }
 
         if ($method === "POST") {
@@ -51,10 +51,7 @@ function routeRequest()
         $restaurantId = (int) $matches[1];
 
         if ($method === "GET") {
-            sendSuccess(
-                ["id" => $restaurantId],
-                "Restaurant retrieved successfully"
-            );
+            getRestaurantById($restaurantId);
         }
 
         if ($method === "PUT") {
