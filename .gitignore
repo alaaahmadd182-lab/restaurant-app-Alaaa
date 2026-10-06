@@ -1,0 +1,16 @@
+# Environment variables / secrets
+.env
+backend/.env
+
+# Dependencies
+backend/vendor/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code local settings
+.vscode/
+
+# Logs
+*.log
