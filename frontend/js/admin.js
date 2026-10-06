@@ -26,6 +26,8 @@ function fillRestaurantForm(restaurant) {
     document
         .querySelector("#restaurant-form button[type='submit']")
         .textContent = "Update Restaurant";
+
+    document.getElementById("cancel-restaurant-edit").hidden = false;
 }
 
 
@@ -233,14 +235,15 @@ restaurantForm.addEventListener("submit", async (event) => {
             message.textContent =
                 "Restaurant added successfully.";
         }
-
         restaurantForm.reset();
+
+        document.getElementById("cancel-restaurant-edit").hidden = true;
+
         document
             .querySelector("#restaurant-form button[type='submit']")
             .textContent = "Add Restaurant";
 
         loadAdminRestaurants();
-
     } catch (error) {
         message.textContent = error.message;
     }
@@ -291,7 +294,7 @@ async function loadAdminMenus(restaurantId, restaurantName) {
         `Menus - ${restaurantName}`;
 
     document.getElementById("menu-form").reset();
-
+    document.getElementById("cancel-menu-edit").hidden = true;
     document
         .querySelector("#menu-form button[type='submit']")
         .textContent = "Add Menu";
@@ -328,6 +331,8 @@ async function loadAdminMenus(restaurantId, restaurantName) {
                 document
                     .querySelector("#menu-form button[type='submit']")
                     .textContent = "Update Menu";
+
+                document.getElementById("cancel-menu-edit").hidden = false;
             });
 
             const deleteButton = document.createElement("button");
@@ -465,7 +470,7 @@ async function loadAdminItems(menuId, menuName) {
         `Menu Items - ${menuName}`;
 
     document.getElementById("item-form").reset();
-
+    document.getElementById("cancel-item-edit").hidden = true;
     document
         .querySelector("#item-form button[type='submit']")
         .textContent = "Add Item";
@@ -523,6 +528,8 @@ async function loadAdminItems(menuId, menuName) {
                         "#item-form button[type='submit']"
                     )
                     .textContent = "Update Item";
+                
+                document.getElementById("cancel-item-edit").hidden = false;
             });
 
             const deleteButton =
@@ -667,5 +674,40 @@ document
             error.message;
     }
 }
+
+
+document
+    .getElementById("cancel-menu-edit")
+    .addEventListener("click", () => {
+
+        editingMenuId = null;
+
+        document.getElementById("menu-form").reset();
+
+        document
+            .querySelector("#menu-form button[type='submit']")
+            .textContent = "Add Menu";
+
+        document.getElementById("cancel-menu-edit").hidden = true;
+    });
+
+
+
+    document
+        .getElementById("cancel-item-edit")
+        .addEventListener("click", () => {
+
+            editingItemId = null;
+
+            document.getElementById("item-form").reset();
+
+            document
+                .querySelector("#item-form button[type='submit']")
+                .textContent = "Add Item";
+
+            document.getElementById("cancel-item-edit").hidden = true;
+        });
+
+
 loadAdminCategories();
 checkAdmin();
