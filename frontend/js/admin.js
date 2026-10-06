@@ -180,7 +180,33 @@ restaurantForm.addEventListener("submit", async (event) => {
         image:
             document.getElementById("restaurant-image").value.trim() || null
     };
+    if (
+            !restaurant.name ||
+            !restaurant.address ||
+            !restaurant.category_id
+        ) {
+            message.textContent =
+                "Name, address and category are required.";
+            return;
+        }
 
+        if (
+            restaurant.latitude !== null &&
+            (restaurant.latitude < -90 || restaurant.latitude > 90)
+        ) {
+            message.textContent =
+                "Latitude must be between -90 and 90.";
+            return;
+        }
+
+        if (
+            restaurant.longitude !== null &&
+            (restaurant.longitude < -180 || restaurant.longitude > 180)
+        ) {
+            message.textContent =
+                "Longitude must be between -180 and 180.";
+            return;
+        }
     try {
         if (editingRestaurantId) {
 
@@ -550,6 +576,20 @@ document
 
         const message =
             document.getElementById("item-message");
+        
+        if (!item.name) {
+            message.textContent = "Item name is required.";
+            return;
+        }
+
+        if (
+            !Number.isFinite(item.price) ||
+            item.price < 0
+        ) {
+            message.textContent =
+                "Please enter a valid price.";
+            return;
+        }
 
         try {
             if (editingItemId) {
