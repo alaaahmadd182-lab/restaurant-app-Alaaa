@@ -386,13 +386,15 @@ document
     .addEventListener("submit", async (event) => {
 
         event.preventDefault();
+        const submitButton =
+        document.querySelector("#menu-form button[type='submit']");
 
         const name =
             document.getElementById("menu-name").value.trim();
 
         const message =
             document.getElementById("menu-message");
-
+        submitButton.disabled = true;
         try {
             if (editingMenuId) {
 
@@ -432,6 +434,9 @@ document
 
         } catch (error) {
             message.textContent = error.message;
+
+        } finally {
+            submitButton.disabled = false;
         }
     });
 
