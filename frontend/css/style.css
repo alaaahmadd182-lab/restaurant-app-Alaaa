@@ -505,3 +505,232 @@ header nav a:hover {
     background: #222;
     color: white;
 }
+/* =========================================
+   FINAL COLOR THEME
+   Black + White + Burgundy
+   ========================================= */
+
+:root {
+    --burgundy: #7A1F32;
+    --burgundy-dark: #581624;
+    --burgundy-light: #F7EEF0;
+
+    --black: #111111;
+    --dark-gray: #2B2B2B;
+    --gray: #6B6B6B;
+    --light-gray: #F5F5F5;
+    --border-gray: #E1E1E1;
+    --white: #FFFFFF;
+}
+
+/* ---------- Page ---------- */
+
+body {
+    background-color: var(--white);
+    color: var(--black);
+}
+
+/* ---------- Header / Navigation ---------- */
+
+header {
+    background-color: var(--black);
+    color: var(--white);
+    border-bottom: 3px solid var(--burgundy);
+}
+
+header h1,
+header h2,
+header a {
+    color: var(--white);
+}
+
+header a:hover {
+    color: #E8BFC8;
+}
+
+/* ---------- Headings ---------- */
+
+h1,
+h2,
+h3 {
+    color: var(--black);
+}
+
+/* Small burgundy accent on section headings */
+main h2 {
+    border-left: 4px solid var(--burgundy);
+    padding-left: 10px;
+}
+
+/* ---------- Main Buttons ---------- */
+
+button,
+.button,
+input[type="submit"] {
+    background-color: var(--burgundy);
+    color: var(--white);
+    border: 1px solid var(--burgundy);
+}
+
+button:hover,
+.button:hover,
+input[type="submit"]:hover {
+    background-color: var(--burgundy-dark);
+    border-color: var(--burgundy-dark);
+}
+
+/* ---------- Links ---------- */
+
+a {
+    color: var(--burgundy);
+}
+
+a:hover {
+    color: var(--burgundy-dark);
+}
+
+/* ---------- Inputs ---------- */
+
+input,
+select,
+textarea {
+    background-color: var(--white);
+    color: var(--black);
+    border: 1px solid #CCCCCC;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--burgundy);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(122, 31, 50, 0.12);
+}
+
+/* ---------- Restaurant Cards ---------- */
+
+.restaurant-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-gray);
+    border-top: 3px solid var(--burgundy);
+}
+
+.restaurant-card h3 {
+    color: var(--black);
+}
+
+.restaurant-card p {
+    color: var(--gray);
+}
+
+.restaurant-card a {
+    background-color: var(--black);
+    color: var(--white);
+}
+
+.restaurant-card a:hover {
+    background-color: var(--burgundy);
+}
+
+/* ---------- Menu / Menu Item Cards ---------- */
+
+.menu,
+.menu-card,
+.menu-item {
+    background-color: var(--white);
+    border: 1px solid var(--border-gray);
+}
+
+.menu-item {
+    border-left: 3px solid var(--burgundy);
+}
+
+/* ---------- Admin Dashboard ---------- */
+
+.admin-section {
+    background-color: var(--white);
+    border: 1px solid var(--border-gray);
+}
+
+.admin-section h2 {
+    border-left: 4px solid var(--burgundy);
+}
+
+/* Admin action buttons */
+
+.edit-button,
+button.edit {
+    background-color: var(--black);
+    border-color: var(--black);
+    color: var(--white);
+}
+
+.edit-button:hover,
+button.edit:hover {
+    background-color: var(--burgundy);
+    border-color: var(--burgundy);
+}
+
+/* Delete remains visually clear without bright red */
+
+.delete-button,
+button.delete {
+    background-color: var(--white);
+    color: var(--burgundy);
+    border: 1px solid var(--burgundy);
+}
+
+.delete-button:hover,
+button.delete:hover {
+    background-color: var(--burgundy);
+    color: var(--white);
+}
+
+/* ---------- Authentication Pages ---------- */
+
+.auth-container,
+.auth-card {
+    background-color: var(--white);
+    border: 1px solid var(--border-gray);
+    border-top: 4px solid var(--burgundy);
+}
+
+/* ---------- Messages ---------- */
+
+#message {
+    color: var(--burgundy);
+}
+
+/* ---------- Pagination ---------- */
+
+#pagination button {
+    background-color: var(--white);
+    color: var(--black);
+    border: 1px solid var(--black);
+}
+
+#pagination button:hover {
+    background-color: var(--burgundy);
+    color: var(--white);
+    border-color: var(--burgundy);
+}
+
+#pagination button:disabled {
+    background-color: var(--light-gray);
+    color: #999999;
+    border-color: #DDDDDD;
+}
+
+/* ---------- Horizontal accents ---------- */
+
+hr {
+    border: 0;
+    border-top: 1px solid var(--border-gray);
+}
+
+/* ---------- Selection ---------- */
+
+::selection {
+    background-color: var(--burgundy);
+    color: var(--white);
+}
