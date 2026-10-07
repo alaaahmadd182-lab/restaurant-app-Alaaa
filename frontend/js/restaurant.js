@@ -26,6 +26,10 @@ async function loadRestaurant() {
             image.src = restaurant.image;
             image.alt = restaurant.name;
 
+            image.addEventListener("error", () => {
+                image.remove();
+            });
+
             detailsContainer.appendChild(image);
         }
         const name = document.createElement("h2");
@@ -111,6 +115,10 @@ async function loadMenuItems(menuId, section) {
 
                 image.src = item.image;
                 image.alt = item.name;
+
+                image.addEventListener("error", () => {
+                    image.remove();
+                });
 
                 itemContainer.appendChild(image);
             }

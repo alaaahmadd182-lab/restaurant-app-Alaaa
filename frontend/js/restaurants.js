@@ -21,6 +21,10 @@ function displayRestaurants(restaurants) {
             image.src = restaurant.image;
             image.alt = restaurant.name;
 
+            image.addEventListener("error", () => {
+                image.remove();
+            });
+
             card.appendChild(image);
         }
 
