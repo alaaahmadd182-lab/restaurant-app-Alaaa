@@ -156,3 +156,11 @@ ON user_otps(user_id);
 
 ALTER TABLE user_otps
 ADD COLUMN attempts INT NOT NULL DEFAULT 0;
+
+
+CREATE TABLE login_attempts (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(250) NOT NULL,
+    attempted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_login_attempts_email_time (email, attempted_at)
+);
