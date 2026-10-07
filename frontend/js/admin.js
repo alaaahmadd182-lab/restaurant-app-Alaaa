@@ -406,7 +406,14 @@ document
 
         const message =
             document.getElementById("menu-message");
+        const isEditing = Boolean(editingMenuId);
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent =
+            isEditing ? "Updating..." : "Adding...";
+
+        let success = false;
         try {
             if (editingMenuId) {
 
@@ -430,7 +437,7 @@ document
 
                 message.textContent = "Menu added successfully.";
             }
-
+            success = true;
             document.getElementById("menu-form").reset();
 
             document
@@ -449,6 +456,10 @@ document
 
         } finally {
             submitButton.disabled = false;
+
+            if (!success) {
+                submitButton.textContent = originalButtonText;
+            }
         }
     });
 
