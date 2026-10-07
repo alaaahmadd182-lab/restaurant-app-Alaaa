@@ -584,7 +584,8 @@ document
     .addEventListener("submit", async (event) => {
 
         event.preventDefault();
-
+        const submitButton =
+            document.querySelector("#item-form button[type='submit']");
         const item = {
             name:
                 document.getElementById("item-name").value.trim(),
@@ -621,6 +622,7 @@ document
             return;
         }
 
+        submitButton.disabled = true;
         try {
             if (editingItemId) {
 
@@ -668,6 +670,9 @@ document
 
         } catch (error) {
             message.textContent = error.message;
+
+        } finally {
+            submitButton.disabled = false;
         }
     });
 
