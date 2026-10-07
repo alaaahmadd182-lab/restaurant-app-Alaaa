@@ -119,7 +119,8 @@ if (otpForm) {
 
     otpForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-
+        const submitButton =
+            otpForm.querySelector("button[type='submit']");
         const otp =
             document.getElementById("otp").value.trim();
 
@@ -131,7 +132,7 @@ if (otpForm) {
                 "Login session missing. Please login again.";
             return;
         }
-
+        submitButton.disabled = true;
         try {
             const response = await apiRequest(
                 "/auth/verify-otp",
@@ -157,6 +158,9 @@ if (otpForm) {
 
         } catch (error) {
             message.textContent = error.message;
+
+        } finally {
+            submitButton.disabled = false;
         }
     });
 }
