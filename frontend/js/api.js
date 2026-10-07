@@ -17,7 +17,13 @@ async function apiRequest(endpoint, options = {}) {
         headers
     });
 
-    const data = await response.json();
+    let data;
+
+    try {
+        data = await response.json();
+    } catch {
+        throw new Error("Invalid response from the server.");
+    }
     if (response.status === 401 && token) {
         localStorage.removeItem("token");
 
