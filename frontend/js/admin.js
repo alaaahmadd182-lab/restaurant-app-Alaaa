@@ -87,7 +87,7 @@ async function loadAdminRestaurants() {
             deleteButton.textContent = "Delete";
 
             deleteButton.addEventListener("click", () => {
-                deleteRestaurant(restaurant.id);
+                deleteRestaurant(restaurant.id, deleteButton);
             });
             const menusButton = document.createElement("button");
             menusButton.textContent = "Manage Menus";
@@ -266,7 +266,7 @@ restaurantForm.addEventListener("submit", async (event) => {
     }
 });
 
-async function deleteRestaurant(id) {
+async function deleteRestaurant(id, button) {
     const confirmed = confirm(
         "Are you sure you want to delete this restaurant?"
     );
@@ -274,7 +274,9 @@ async function deleteRestaurant(id) {
     if (!confirmed) {
         return;
     }
-
+    button.disabled = true;
+    const originalButtonText = button.textContent;
+    button.textContent = "Deleting...";
     const message =
         document.getElementById("restaurant-message");
 
@@ -303,6 +305,9 @@ async function deleteRestaurant(id) {
 
     } catch (error) {
         message.textContent = error.message;
+
+        button.disabled = false;
+        button.textContent = originalButtonText;
     }
 }
 
