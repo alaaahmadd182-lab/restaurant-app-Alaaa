@@ -266,7 +266,17 @@ async function deleteRestaurant(id) {
         document.getElementById("restaurant-message").textContent =
             "Restaurant deleted successfully.";
 
+        if (selectedRestaurantId === id) {
+            selectedRestaurantId = null;
+            selectedMenuId = null;
+            editingMenuId = null;
+            editingItemId = null;
+
+            document.getElementById("menu-management").hidden = true;
+            document.getElementById("item-management").hidden = true;
+        }
         loadAdminRestaurants();
+
 
     } catch (error) {
         document.getElementById("restaurant-message").textContent =
@@ -284,7 +294,10 @@ let editingMenuId = null;
 async function loadAdminMenus(restaurantId, restaurantName) {
     selectedRestaurantId = restaurantId;
     editingMenuId = null;
+    selectedMenuId = null;
+    editingItemId = null;
 
+    document.getElementById("item-management").hidden = true;
     const section = document.getElementById("menu-management");
     const container = document.getElementById("admin-menus");
 
