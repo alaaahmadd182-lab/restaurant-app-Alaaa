@@ -152,3 +152,7 @@ CREATE TABLE user_otps (
 
 CREATE INDEX idx_user_otps_user
 ON user_otps(user_id);
+
+
+ALTER TABLE user_otps
+ADD COLUMN attempts INT NOT NULL DEFAULT 0;
