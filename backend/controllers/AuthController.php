@@ -141,6 +141,35 @@ function login()
     }
 
     try {
+        // Remove old login attempts
+        $cleanupStmt = $pdo->prepare("
+            DELETE FROM login_attempts
+            WHERE email = :email
+            AND attempted_at < DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+        ");
+        $cleanupStmt->execute([
+            "email" => $email
+        ]);
+
+        // Count recent failed attempts
+        $attemptStmt = $pdo->prepare("
+            SELECT COUNT(*)
+            FROM login_attempts
+            WHERE email = :email
+            AND attempted_at >= DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+        ");
+        $attemptStmt->execute([
+            "email" => $email
+        ]);
+
+        $attemptCount = (int) $attemptStmt->fetchColumn();
+
+        if ($attemptCount >= 5) {
+            sendError(
+                "Too many login attempts. Please try again in 15 minutes.",
+                429
+            );
+        }
         $stmt = $pdo->prepare("
             SELECT
                 id,
@@ -161,12 +190,28 @@ function login()
 
         $user = $stmt->fetch();
 
-        if (
-            !$user ||
-            !password_verify($password, $user["password"])
-        ) {
+        if (!$user || !password_verify($password, $user["password"])) {
+
+            $attemptStmt = $pdo->prepare("
+                INSERT INTO login_attempts (email)
+                VALUES (:email)
+            ");
+
+            $attemptStmt->execute([
+                "email" => $email
+            ]);
+
             sendError("Invalid email or password.", 401);
         }
+        // Successful login resets failed attempts
+        $clearAttemptsStmt = $pdo->prepare("
+            DELETE FROM login_attempts
+            WHERE email = :email
+        ");
+
+        $clearAttemptsStmt->execute([
+            "email" => $email
+        ]);
 
         // Generate a new OTP
         $otp = generateOtpForUser($user["id"]);
@@ -191,6 +236,7 @@ function login()
             ],
             "Verification code sent to your email."
         );
+        
 
     } catch (PDOException $e) {
         sendError("Unable to login.", 500);
