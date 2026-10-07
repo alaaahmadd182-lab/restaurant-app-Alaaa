@@ -56,7 +56,8 @@ const loginForm = document.getElementById("login-form");
 if (loginForm) {
     loginForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-
+        const submitButton =
+            loginForm.querySelector("button[type='submit']");
         const email =
             document.getElementById("login-email").value.trim();
 
@@ -64,7 +65,7 @@ if (loginForm) {
             document.getElementById("login-password").value;
 
         const message = document.getElementById("message");
-
+        submitButton.disabled = true;
         try {
             const response = await apiRequest("/auth/login", {
                 method: "POST",
@@ -87,6 +88,9 @@ if (loginForm) {
 
         } catch (error) {
             message.textContent = error.message;
+
+        } finally {
+            submitButton.disabled = false;
         }
     });
 }
