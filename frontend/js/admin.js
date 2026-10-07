@@ -300,7 +300,7 @@ async function deleteRestaurant(id) {
 
         loadAdminRestaurants();
 
-        
+
     } catch (error) {
         message.textContent = error.message;
     }
@@ -474,13 +474,16 @@ document
     if (!confirm("Delete this menu and its items?")) {
         return;
     }
+    const message =
+        document.getElementById("menu-message");
 
+    message.textContent = "Deleting menu...";
     try {
         await apiRequest(`/menus/${id}`, {
             method: "DELETE"
         });
 
-        document.getElementById("menu-message").textContent =
+        message.textContent =
             "Menu deleted successfully.";
 
         const restaurantName =
@@ -494,8 +497,7 @@ document
         );
 
     } catch (error) {
-        document.getElementById("menu-message").textContent =
-            error.message;
+        message.textContent = error.message;
     }
 }
 
