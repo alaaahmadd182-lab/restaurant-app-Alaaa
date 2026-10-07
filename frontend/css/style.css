@@ -407,3 +407,67 @@ img {
         margin-top: 8px;
     }
 }
+
+/* ---------- Header & Navigation ---------- */
+
+header h1 {
+    margin: 0;
+    font-size: 24px;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+
+header nav a {
+    font-weight: 500;
+    padding: 8px 10px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+header nav a:hover {
+    background: #f0f0f0;
+}
+
+#user-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+#user-area p,
+#user-area span {
+    margin: 0;
+}
+
+#user-area a {
+    font-weight: 500;
+}
+
+#logout-button {
+    padding: 8px 14px;
+}
+
+
+/* ---------- Mobile Navigation ---------- */
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    header nav {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    #user-area {
+        flex-wrap: wrap;
+    }
+}
