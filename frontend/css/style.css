@@ -471,3 +471,37 @@ header nav a:hover {
         flex-wrap: wrap;
     }
 }
+
+/* ---------- Action Buttons ---------- */
+
+#admin-restaurants button,
+#admin-menus button,
+#admin-items button {
+    background: #e9e9e9;
+    color: #222;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#admin-restaurants button:hover,
+#admin-menus button:hover,
+#admin-items button:hover {
+    opacity: 0.8;
+    transform: translateY(-1px);
+}
+
+/* Delete buttons */
+
+#admin-restaurants button:nth-of-type(2),
+#admin-menus button:nth-of-type(2),
+#admin-items button:nth-of-type(2) {
+    background: #b42318;
+    color: white;
+}
+
+/* Manage buttons */
+
+#admin-restaurants button:nth-of-type(3),
+#admin-menus button:nth-of-type(3) {
+    background: #222;
+    color: white;
+}
