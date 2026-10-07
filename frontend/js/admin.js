@@ -275,12 +275,17 @@ async function deleteRestaurant(id) {
         return;
     }
 
+    const message =
+        document.getElementById("restaurant-message");
+
+    message.textContent = "Deleting restaurant...";
+
     try {
         await apiRequest(`/restaurants/${id}`, {
             method: "DELETE"
         });
 
-        document.getElementById("restaurant-message").textContent =
+        message.textContent =
             "Restaurant deleted successfully.";
 
         if (selectedRestaurantId === id) {
@@ -292,12 +297,12 @@ async function deleteRestaurant(id) {
             document.getElementById("menu-management").hidden = true;
             document.getElementById("item-management").hidden = true;
         }
+
         loadAdminRestaurants();
 
-
+        
     } catch (error) {
-        document.getElementById("restaurant-message").textContent =
-            error.message;
+        message.textContent = error.message;
     }
 }
 
