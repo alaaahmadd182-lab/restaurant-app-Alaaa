@@ -23,7 +23,7 @@ function displayRestaurants(restaurants) {
 
             card.appendChild(image);
         }
-        
+
         const name = document.createElement("h3");
         name.textContent = restaurant.name;
 
@@ -129,7 +129,8 @@ function loadNearbyRestaurants() {
                 const response = await apiRequest(
                     `/restaurants/nearby?latitude=${latitude}&longitude=${longitude}&radius=10`
                 );
-
+                document.getElementById("pagination").hidden = true;
+                
                 displayRestaurants(response.data);
 
             } catch (error) {
@@ -145,6 +146,12 @@ function loadNearbyRestaurants() {
 }
 
 function updatePagination() {
+    if (totalPages === 0) {
+        document.getElementById("pagination").hidden = true;
+        return;
+    }
+
+    document.getElementById("pagination").hidden = false;
     document.getElementById("page-info").textContent =
         `Page ${currentPage} of ${totalPages}`;
 
