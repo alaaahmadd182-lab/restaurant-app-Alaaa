@@ -718,17 +718,22 @@ document
     });
 
 
-    async function deleteMenuItem(id) {
+   async function deleteMenuItem(id) {
     if (!confirm("Are you sure you want to delete this item?")) {
         return;
     }
+
+    const message =
+        document.getElementById("item-message");
+
+    message.textContent = "Deleting item...";
 
     try {
         await apiRequest(`/menu-items/${id}`, {
             method: "DELETE"
         });
 
-        document.getElementById("item-message").textContent =
+        message.textContent =
             "Item deleted successfully.";
 
         const menuName =
@@ -739,8 +744,7 @@ document
         loadAdminItems(selectedMenuId, menuName);
 
     } catch (error) {
-        document.getElementById("item-message").textContent =
-            error.message;
+        message.textContent = error.message;
     }
 }
 
