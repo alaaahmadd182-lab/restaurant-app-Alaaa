@@ -128,6 +128,11 @@ function loadNearbyRestaurants() {
         return;
     }
 
+    restaurantsContainer.textContent =
+        "Finding restaurants near you...";
+
+    document.getElementById("pagination").hidden = true;
+
     navigator.geolocation.getCurrentPosition(
         async (position) => {
             const latitude = position.coords.latitude;
@@ -137,18 +142,18 @@ function loadNearbyRestaurants() {
                 const response = await apiRequest(
                     `/restaurants/nearby?latitude=${latitude}&longitude=${longitude}&radius=10`
                 );
-                document.getElementById("pagination").hidden = true;
-                
+
                 displayRestaurants(response.data);
 
             } catch (error) {
-                restaurantsContainer.textContent = error.message;
+                restaurantsContainer.textContent =
+                    error.message;
             }
         },
 
         () => {
             restaurantsContainer.textContent =
-                "Location permission is required to use Near Me.";
+                "Unable to access your location. Please allow location access and try again.";
         }
     );
 }
