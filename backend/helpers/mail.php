@@ -45,7 +45,8 @@ function sendOtpEmail($email, $otp)
 
         return true;
 
-    } catch (Exception $e) {
+    } catch (Throwable $e) {
+        error_log("MAIL ERROR: " . $e->getMessage());
         return false;
     }
 }

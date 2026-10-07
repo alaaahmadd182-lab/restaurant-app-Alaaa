@@ -108,21 +108,13 @@ const otpForm = document.getElementById("otp-form");
 
 if (otpForm) {
     const email = sessionStorage.getItem("otp_email");
-    
-
-    const developmentCode =
-        document.getElementById("development-code");
-
-    // Development only
-    if (developmentOtp) {
-        developmentCode.textContent =
-            `Development OTP: ${developmentOtp}`;
-    }
 
     otpForm.addEventListener("submit", async (event) => {
         event.preventDefault();
+
         const submitButton =
             otpForm.querySelector("button[type='submit']");
+
         const otp =
             document.getElementById("otp").value.trim();
 
@@ -134,16 +126,23 @@ if (otpForm) {
                 "Login session missing. Please login again.";
             return;
         }
+
+        if (!/^\d{6}$/.test(otp)) {
+            message.textContent =
+                "Please enter the 6-digit verification code.";
+            return;
+        }
+
         const originalButtonText = submitButton.textContent;
 
         submitButton.disabled = true;
         submitButton.textContent = "Verifying...";
+
         try {
             const response = await apiRequest(
                 "/auth/verify-otp",
                 {
                     method: "POST",
-
                     body: JSON.stringify({
                         email: email,
                         otp: otp
@@ -157,7 +156,6 @@ if (otpForm) {
             );
 
             sessionStorage.removeItem("otp_email");
-            sessionStorage.removeItem("development_otp");
 
             window.location.href = "index.html";
 
