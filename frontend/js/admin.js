@@ -148,7 +148,8 @@ const restaurantForm =
 
 restaurantForm.addEventListener("submit", async (event) => {
     event.preventDefault();
-
+    const submitButton =
+    restaurantForm.querySelector("button[type='submit']");
     const message =
         document.getElementById("restaurant-message");
 
@@ -209,6 +210,7 @@ restaurantForm.addEventListener("submit", async (event) => {
                 "Longitude must be between -180 and 180.";
             return;
         }
+        submitButton.disabled = true;
     try {
         if (editingRestaurantId) {
 
@@ -246,6 +248,9 @@ restaurantForm.addEventListener("submit", async (event) => {
         loadAdminRestaurants();
     } catch (error) {
         message.textContent = error.message;
+
+    } finally {
+        submitButton.disabled = false;
     }
 });
 
