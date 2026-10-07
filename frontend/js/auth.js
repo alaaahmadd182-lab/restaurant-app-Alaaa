@@ -141,7 +141,10 @@ if (otpForm) {
                 "Login session missing. Please login again.";
             return;
         }
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent = "Verifying...";
         try {
             const response = await apiRequest(
                 "/auth/verify-otp",
@@ -170,6 +173,7 @@ if (otpForm) {
 
         } finally {
             submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
         }
     });
 }
