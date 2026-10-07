@@ -21,7 +21,11 @@ if (signupForm) {
             document.getElementById("password").value;
 
         const message = document.getElementById("message");
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent = "Creating account...";
+
         try {
             await apiRequest("/auth/signup", {
                 method: "POST",
@@ -47,6 +51,7 @@ if (signupForm) {
 
         } finally {
             submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
         }
     });
 }
