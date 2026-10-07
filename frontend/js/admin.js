@@ -645,7 +645,14 @@ document
             return;
         }
 
+        const isEditing = Boolean(editingItemId);
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent =
+            isEditing ? "Updating..." : "Adding...";
+
+        let success = false;
         try {
             if (editingItemId) {
 
@@ -675,7 +682,7 @@ document
                 message.textContent =
                     "Item added successfully.";
             }
-
+            success = true;
             document.getElementById("item-form").reset();
 
             document
@@ -696,7 +703,11 @@ document
 
         } finally {
             submitButton.disabled = false;
-        }
+
+            if (!success) {
+                    submitButton.textContent = originalButtonText;
+                }
+            }
     });
 
 
