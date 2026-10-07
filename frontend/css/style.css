@@ -313,3 +313,97 @@ img {
     margin-top: 15px;
     text-align: center;
 }
+
+
+/* ---------- Admin Dashboard ---------- */
+
+#restaurant-management,
+#menu-management,
+#item-management {
+    background: white;
+    padding: 25px;
+    margin-bottom: 30px;
+    border: 1px solid #e5e5e5;
+    border-radius: 12px;
+}
+
+#restaurant-form,
+#menu-form,
+#item-form {
+    margin-bottom: 25px;
+}
+
+#restaurant-form button[type="submit"],
+#menu-form button[type="submit"],
+#item-form button[type="submit"] {
+    background: #222;
+    color: white;
+}
+
+#cancel-restaurant-edit,
+#cancel-menu-edit,
+#cancel-item-edit {
+    background: #ddd;
+    color: #222;
+    margin-left: 8px;
+}
+
+#admin-restaurants > div,
+#admin-menus > div,
+#admin-items > div {
+    background: #f8f8f8;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 12px;
+}
+
+#admin-restaurants button,
+#admin-menus button,
+#admin-items button {
+    margin-right: 8px;
+    margin-top: 8px;
+}
+
+#admin-restaurants button:hover,
+#admin-menus button:hover,
+#admin-items button:hover {
+    opacity: 0.8;
+}
+
+#restaurant-message,
+#menu-message,
+#item-message,
+#admin-message {
+    margin: 12px 0;
+    font-weight: 500;
+}
+
+#logout-button {
+    background: #222;
+    color: white;
+}
+
+/* ---------- Admin Mobile ---------- */
+
+@media (max-width: 600px) {
+    #restaurant-management,
+    #menu-management,
+    #item-management {
+        padding: 16px;
+    }
+
+    #admin-restaurants button,
+    #admin-menus button,
+    #admin-items button {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    #cancel-restaurant-edit,
+    #cancel-menu-edit,
+    #cancel-item-edit {
+        margin-left: 0;
+        margin-top: 8px;
+    }
+}
