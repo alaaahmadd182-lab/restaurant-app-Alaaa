@@ -210,7 +210,14 @@ restaurantForm.addEventListener("submit", async (event) => {
                 "Longitude must be between -180 and 180.";
             return;
         }
+        const isEditing = Boolean(editingRestaurantId);
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent =
+           isEditing ? "Updating..." : "Adding...";
+
+        let success = false;
     try {
         if (editingRestaurantId) {
 
@@ -237,6 +244,7 @@ restaurantForm.addEventListener("submit", async (event) => {
             message.textContent =
                 "Restaurant added successfully.";
         }
+        success = true;
         restaurantForm.reset();
 
         document.getElementById("cancel-restaurant-edit").hidden = true;
@@ -251,6 +259,10 @@ restaurantForm.addEventListener("submit", async (event) => {
 
     } finally {
         submitButton.disabled = false;
+
+        if (!success) {
+            submitButton.textContent = originalButtonText;
+        }
     }
 });
 
