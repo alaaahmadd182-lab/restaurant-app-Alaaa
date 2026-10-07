@@ -90,12 +90,6 @@ if (loginForm) {
 
             sessionStorage.setItem("otp_email", email);
 
-            // Temporary development-only OTP
-            sessionStorage.setItem(
-                "development_otp",
-                response.data.development_otp
-            );
-
             window.location.href = "otp.html";
 
         } catch (error) {
@@ -114,8 +108,7 @@ const otpForm = document.getElementById("otp-form");
 
 if (otpForm) {
     const email = sessionStorage.getItem("otp_email");
-    const developmentOtp =
-        sessionStorage.getItem("development_otp");
+    
 
     const developmentCode =
         document.getElementById("development-code");

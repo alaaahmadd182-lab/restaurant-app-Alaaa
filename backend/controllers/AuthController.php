@@ -5,7 +5,7 @@ require_once __DIR__ . "/../helpers/response.php";
 require_once __DIR__ . "/../helpers/request.php";
 require_once __DIR__ . "/../helpers/jwt.php";
 require_once __DIR__ . "/../helpers/otp.php";
-
+require_once __DIR__ . "/../helpers/mail.php";
 
 function signup()
 {
@@ -161,20 +161,35 @@ function login()
 
         $user = $stmt->fetch();
 
-        if (!$user || !password_verify($password, $user["password"])) {
+        if (
+            !$user ||
+            !password_verify($password, $user["password"])
+        ) {
             sendError("Invalid email or password.", 401);
         }
+
+        // Generate a new OTP
         $otp = generateOtpForUser($user["id"]);
 
-        // DEVELOPMENT ONLY:
-        // Until email delivery is implemented, return the OTP
-        // so we can test the verification flow in Postman.
+        // Send OTP to the user's email
+        $emailSent = sendOtpEmail(
+            $user["email"],
+            $otp
+        );
+
+        if (!$emailSent) {
+            sendError(
+                "Unable to send verification code. Please try again.",
+                500
+            );
+        }
+
+        // Do NOT return the OTP to the frontend
         sendSuccess(
             [
-                "otp_required" => true,
-                "development_otp" => $otp
+                "otp_required" => true
             ],
-            "Password verified. OTP verification required."
+            "Verification code sent to your email."
         );
 
     } catch (PDOException $e) {
