@@ -3,7 +3,8 @@ const signupForm = document.getElementById("signup-form");
 if (signupForm) {
     signupForm.addEventListener("submit", async (event) => {
         event.preventDefault();
-
+        const submitButton =
+            signupForm.querySelector("button[type='submit']");
         const firstName =
             document.getElementById("first-name").value.trim();
 
@@ -20,7 +21,7 @@ if (signupForm) {
             document.getElementById("password").value;
 
         const message = document.getElementById("message");
-
+        submitButton.disabled = true;
         try {
             await apiRequest("/auth/signup", {
                 method: "POST",
@@ -43,6 +44,9 @@ if (signupForm) {
 
         } catch (error) {
             message.textContent = error.message;
+
+        } finally {
+            submitButton.disabled = false;
         }
     });
 }
