@@ -5,7 +5,7 @@ const limit = 5;
 
 function displayRestaurants(restaurants) {
     restaurantsContainer.innerHTML = "";
-
+    
     if (restaurants.length === 0) {
         restaurantsContainer.textContent = "No restaurants found.";
         return;
@@ -72,6 +72,10 @@ async function loadCategories() {
 }
 
 async function filterRestaurants(page = 1) {
+    const container =
+        document.getElementById("restaurants");
+
+    container.textContent = "Loading restaurants...";
     const search =
         document.getElementById("search").value.trim();
 
@@ -107,7 +111,7 @@ async function filterRestaurants(page = 1) {
         updatePagination();
 
     } catch (error) {
-        restaurantsContainer.textContent = error.message;
+        container.textContent = error.message;
     }
 }
 
