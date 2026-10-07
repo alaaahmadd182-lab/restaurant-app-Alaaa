@@ -2,6 +2,7 @@ const restaurantsContainer = document.getElementById("restaurants");
 let currentPage = 1;
 let totalPages = 1;
 const limit = 5;
+let searchTimeout;
 
 function displayRestaurants(restaurants) {
     restaurantsContainer.innerHTML = "";
@@ -179,7 +180,12 @@ function updatePagination() {
 document
     .getElementById("search")
     .addEventListener("input", () => {
-        filterRestaurants(1);
+
+        clearTimeout(searchTimeout);
+
+        searchTimeout = setTimeout(() => {
+            filterRestaurants(1);
+        }, 300);
     });
 
 document
