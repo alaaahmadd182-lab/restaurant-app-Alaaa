@@ -182,7 +182,6 @@ function login()
     }
 }
 
-
 function verifyOtp()
 {
     global $pdo;
@@ -234,7 +233,8 @@ function verifyOtp()
             SELECT
                 id,
                 otp_hash,
-                expires_at
+                expires_at,
+                attempts
             FROM user_otps
             WHERE user_id = :user_id
               AND used_at IS NULL
@@ -257,8 +257,26 @@ function verifyOtp()
             sendError("Invalid or expired OTP.", 401);
         }
 
+        // Block after 5 failed attempts
+        if ((int) $otpRecord["attempts"] >= 5) {
+            sendError("Invalid or expired OTP.", 401);
+        }
+
         // Check OTP
         if (!password_verify($otp, $otpRecord["otp_hash"])) {
+
+            $attemptStmt = $pdo->prepare("
+                UPDATE user_otps
+                SET attempts = attempts + 1
+                WHERE id = :id
+                  AND used_at IS NULL
+                  AND attempts < 5
+            ");
+
+            $attemptStmt->execute([
+                "id" => $otpRecord["id"]
+            ]);
+
             sendError("Invalid or expired OTP.", 401);
         }
 
@@ -268,6 +286,7 @@ function verifyOtp()
             SET used_at = NOW()
             WHERE id = :id
               AND used_at IS NULL
+              AND attempts < 5
         ");
 
         $updateStmt->execute([
@@ -278,7 +297,7 @@ function verifyOtp()
             sendError("Invalid or expired OTP.", 401);
         }
 
-        // OTP passed → NOW generate JWT
+        // OTP passed → generate JWT
         $token = generateJwt($user);
 
         sendSuccess(
