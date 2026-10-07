@@ -74,7 +74,10 @@ if (loginForm) {
             document.getElementById("login-password").value;
 
         const message = document.getElementById("message");
+        const originalButtonText = submitButton.textContent;
+
         submitButton.disabled = true;
+        submitButton.textContent = "Logging in...";
         try {
             const response = await apiRequest("/auth/login", {
                 method: "POST",
@@ -100,6 +103,7 @@ if (loginForm) {
 
         } finally {
             submitButton.disabled = false;
+            submitButton.textContent = originalButtonText;
         }
     });
 }
